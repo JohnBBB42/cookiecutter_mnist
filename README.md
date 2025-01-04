@@ -4,10 +4,18 @@ Simple mnist neuralnetwork
 To install the project run
 `pip install -e .`
 
+To preprocess data run
+`invoke preprocess-data`
+
+To install requirements.txt run
+`invoke requirements`
+
 To train the network run
 `python src\mnist_project\train.py --lr 1e-4` or `invoke train`
+
 To evaluate the network run
 `python src\mnist_project\evaluate.py model.pth`
+
 To visualize the results run
 `python src\mnist_project\visualize.py model.pht`
 
