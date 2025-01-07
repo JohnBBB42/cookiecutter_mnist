@@ -14,6 +14,11 @@ readme = "README.md"
 requires-python = ">=3.11"
 dynamic = ["dependencies", "optional-dependencies"]
 
+[project.scripts]
+train = "mnist_project.train:main"
+evaluate = "mnist_project.evaluate:app"
+iris_classifier = "mnist_project.iris_classifier:app"
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
@@ -22,6 +27,15 @@ dev = {file = ['requirements_dev.txt']}
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "C", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+ignore-decorators = []
+property-decorators = []
+ignore-var-parameters = false
 
 [tool.coverage.run]
 omit = ["tests/*"]
