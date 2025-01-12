@@ -39,5 +39,5 @@ jobs:
 
       - name: Run tests & coverage
         run: |
-          coverage run -m pytest tests/
+          coverage run --source=mnist_project -m pytest tests/
           coverage report -m
