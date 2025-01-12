@@ -1,0 +1,29 @@
+{
+  "os":  "Linux-4.18.0-553.33.1.el8_10.x86_64-x86_64-with-glibc2.28",
+  "python":  "CPython 3.12.8",
+  "startedAt":  "2025-01-12T13:43:42.801249Z",
+  "program":  "/home/energy/s244501/miniconda3/envs/MLOPS_env/bin/train",
+  "git":  {
+    "remote":  "git@github.com:JohnBBB42/cookiecutter_mnist.git",
+    "commit":  "037ae15030fd955cd37bf350b704d3baa870c5b8"
+  },
+  "email":  "Jhz209@alumni.ku.dk",
+  "root":  ".",
+  "host":  "surt.fysik.dtu.dk",
+  "executable":  "/home/energy/s244501/miniconda3/envs/MLOPS_env/bin/python",
+  "cpu_count":  56,
+  "cpu_count_logical":  112,
+  "disk":  {
+    "/":  {
+      "total":  "68698243072",
+      "used":  "21823569920"
+    }
+  },
+  "memory":  {
+    "total":  "539912142848"
+  },
+  "cpu":  {
+    "count":  56,
+    "countLogical":  112
+  }
+}

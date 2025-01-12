@@ -1,0 +1,16 @@
+program: /home/energy/s244501/dtu_mlops/ML_OPS/M14-Logging/my_project/src/mnist_project/train.py
+name: sweepdemo
+project: corrupt_mnist
+entity: jhz209-university-of-copenhagen
+method: grid
+metric:
+    goal: minimize
+    name: validation_loss
+parameters:
+    learning-rate:
+        values: [0.0001, 0.001, 0.01, 0.1]
+    batch-size:
+        values: [16, 32, 64]
+    epochs:
+        values: [5, 10, 15]
+run_cap: 10

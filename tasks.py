@@ -87,3 +87,9 @@ def git(ctx: Context, message: str) -> None:
     ctx.run(f"git add .")
     ctx.run(f"git commit -m '{message}'")
     ctx.run(f"git push")
+
+@task
+def conda(ctx: Context, name: str = "dtu_mlops") -> None:
+    ctx.run(f"conda create --name {name} --file environment.yaml", echo=True)
+    ctx.run(f"conda activate {name}", echo=True)
+    ctx.run(f"pip install -e .", echo=True)

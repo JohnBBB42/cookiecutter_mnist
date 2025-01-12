@@ -15,8 +15,9 @@ requires-python = ">=3.11"
 dynamic = ["dependencies", "optional-dependencies"]
 
 [project.scripts]
-train = "mnist_project.train:main"
+train = "mnist_project.train:app"
 evaluate = "mnist_project.evaluate:app"
+visualize = "mnist_project.visualize:app"
 iris_classifier = "mnist_project.iris_classifier:app"
 
 [tool.setuptools.dynamic]

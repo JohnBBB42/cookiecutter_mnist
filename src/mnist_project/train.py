@@ -1,53 +1,36 @@
-import matplotlib.pyplot as plt
-import torch
+# train.py
+import pytorch_lightning as pl
 import typer
-from mnist_project.model import MyAwesomeModel
+from mnist_project.data import CorruptMNISTDataModule
+from mnist_project.lightning import MyAwesomeModel
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 
-from mnist_project.data import corrupt_mnist
+app = typer.Typer()
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
-
-
-def main(lr: float = 1e-3, batch_size: int = 32, epochs: int = 10) -> None:
-    """Train a model on MNIST."""
-    print("Training day and night")
-    print(f"{lr=}, {batch_size=}, {epochs=}")
-
-    model = MyAwesomeModel().to(DEVICE)
-    train_set, _ = corrupt_mnist()
-
-    train_dataloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size)
-
-    loss_fn = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
-    statistics = {"train_loss": [], "train_accuracy": []}
-    for epoch in range(epochs):
-        model.train()
-        for i, (img, target) in enumerate(train_dataloader):
-            img, target = img.to(DEVICE), target.to(DEVICE)
-            optimizer.zero_grad()
-            y_pred = model(img)
-            loss = loss_fn(y_pred, target)
-            loss.backward()
-            optimizer.step()
-            statistics["train_loss"].append(loss.item())
-
-            accuracy = (y_pred.argmax(dim=1) == target).float().mean().item()
-            statistics["train_accuracy"].append(accuracy)
-
-            if i % 100 == 0:
-                print(f"Epoch {epoch}, iter {i}, loss: {loss.item()}")
-
-    print("Training complete")
-    torch.save(model.state_dict(), "model.pth")
-    fig, axs = plt.subplots(1, 2, figsize=(15, 5))
-    axs[0].plot(statistics["train_loss"])
-    axs[0].set_title("Train loss")
-    axs[1].plot(statistics["train_accuracy"])
-    axs[1].set_title("Train accuracy")
-    fig.savefig("training_statistics.png")
-
+@app.command()
+def main():
+    data_module = CorruptMNISTDataModule(
+        data_dir="data/processed",
+        batch_size=64
+    )
+    model = MyAwesomeModel()
+    early_stopping_callback = EarlyStopping(
+    monitor="val_loss", patience=3, verbose=True, mode="min"
+    )
+    checkpoint_callback = ModelCheckpoint(
+    dirpath="./models", monitor="val_loss", mode="min"
+    )
+    trainer = pl.Trainer(
+        default_root_dir="my_logs_dir",
+        max_epochs=10,
+        limit_train_batches=0.2,
+	callbacks=[early_stopping_callback, checkpoint_callback],
+	profiler="simple",
+	logger=pl.loggers.WandbLogger(project="lightning_mnist")
+    )
+    trainer.fit(model, datamodule=data_module)
+    trainer.test(model, datamodule=data_module)
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()
+
