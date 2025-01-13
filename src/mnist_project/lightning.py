@@ -1,6 +1,5 @@
 import pytorch_lightning as pl
 import torch
-import wandb
 from torch import nn
 
 
@@ -35,10 +34,10 @@ class MyAwesomeModel(pl.LightningModule):
         y_pred = self(img)
         loss = self.loss_fn(y_pred, target)
         acc = (target == y_pred.argmax(dim=-1)).float().mean()
-        self.log('train_loss', loss, prog_bar=True)
-        self.log('train_acc', acc, prog_bar=True)
-        #logits_np = y_pred.detach().cpu().numpy()
-        #self.logger.experiment.log({'logits': wandb.Histogram(logits_np)})
+        self.log("train_loss", loss, prog_bar=True)
+        self.log("train_acc", acc, prog_bar=True)
+        # logits_np = y_pred.detach().cpu().numpy()
+        # self.logger.experiment.log({'logits': wandb.Histogram(logits_np)})
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -47,7 +46,7 @@ class MyAwesomeModel(pl.LightningModule):
         y_pred = self(img)
         loss = self.loss_fn(y_pred, target)
         acc = (target == y_pred.argmax(dim=-1)).float().mean()
-        self.log('val_acc', acc, prog_bar=True, on_epoch=True)
+        self.log("val_acc", acc, prog_bar=True, on_epoch=True)
         self.log("val_loss", loss, prog_bar=True, on_epoch=True)
         return loss
 
@@ -57,7 +56,7 @@ class MyAwesomeModel(pl.LightningModule):
         y_pred = self(img)
         loss = self.loss_fn(y_pred, target)
         acc = (target == y_pred.argmax(dim=-1)).float().mean()
-        self.log('test_acc', acc, prog_bar=True)
+        self.log("test_acc", acc, prog_bar=True)
         self.log("test_loss", loss, prog_bar=True)
         return loss
 
@@ -74,4 +73,3 @@ if __name__ == "__main__":
     dummy_input = torch.randn(1, 1, 28, 28)
     output = model(dummy_input)
     print(f"Output shape: {output.shape}")
-

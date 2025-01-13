@@ -1,6 +1,7 @@
-from mnist_project.lightning import MyAwesomeModel
-import torch
 import pytest
+import torch
+
+from mnist_project.lightning import MyAwesomeModel
 
 
 @pytest.mark.parametrize("batch_size", [32, 64])
@@ -23,6 +24,7 @@ def test_training_step():
     assert loss is not None, "training_step did not return a loss."
     assert loss.requires_grad, "loss should require grad for backprop."
 
+
 def test_validation_step():
     model = MyAwesomeModel()
     model.log = lambda *args, **kwargs: None
@@ -32,6 +34,7 @@ def test_validation_step():
 
     loss = model.validation_step(batch, batch_idx=0)
     assert loss is not None, "validation_step did not return a loss."
+
 
 def test_test_step():
     model = MyAwesomeModel()

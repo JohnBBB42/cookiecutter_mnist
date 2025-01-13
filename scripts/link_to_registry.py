@@ -1,4 +1,5 @@
 import wandb
+
 api = wandb.Api()
 artifact_path = "<entity>/<project>/<artifact_name>:<version>"
 artifact = api.artifact(artifact_path)

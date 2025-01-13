@@ -1,3 +1,3 @@
 import matplotlib.pyplot as plt
-plt.close('all')
 
+plt.close("all")

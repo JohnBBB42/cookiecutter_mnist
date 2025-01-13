@@ -3,8 +3,9 @@ import operator
 import os
 
 import typer
-import wandb
 from dotenv import load_dotenv
+
+import wandb
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -22,7 +23,7 @@ def stage_best_model_to_registry(model_name: str, metric_name: str = "accuracy",
         higher_is_better: Whether higher metric values are better.
     """
     logger.info("Starting to stage the best model...")
-    
+
     # Initialize the W&B API
     api = wandb.Api(
         api_key=os.getenv("WANDB_API_KEY"),
@@ -74,4 +75,3 @@ def stage_best_model_to_registry(model_name: str, metric_name: str = "accuracy",
 
 if __name__ == "__main__":
     typer.run(stage_best_model_to_registry)
-

@@ -1,11 +1,13 @@
+import pytorch_lightning as pl
 import torch
 import typer
-from torch.utils.data import TensorDataset, DataLoader
-import pytorch_lightning as pl
+from torch.utils.data import DataLoader, TensorDataset
+
 
 def normalize(images: torch.Tensor) -> torch.Tensor:
     """Normalize images."""
     return (images - images.mean()) / images.std()
+
 
 def preprocess_data(raw_dir: str = "data/raw", processed_dir: str = "data/processed") -> None:
     """Process raw data and save it to processed directory."""
@@ -35,9 +37,8 @@ def preprocess_data(raw_dir: str = "data/raw", processed_dir: str = "data/proces
     torch.save(test_images, f"{processed_dir}/test_images.pt")
     torch.save(test_target, f"{processed_dir}/test_target.pt")
 
-def corrupt_mnist(
-    processed_dir: str = "data/processed"
-) -> tuple[TensorDataset, TensorDataset]:
+
+def corrupt_mnist(processed_dir: str = "data/processed") -> tuple[TensorDataset, TensorDataset]:
     """Return train and test datasets for corrupt MNIST."""
     train_images = torch.load(f"{processed_dir}/train_images.pt", weights_only=True)
     train_target = torch.load(f"{processed_dir}/train_target.pt", weights_only=True)
@@ -47,6 +48,7 @@ def corrupt_mnist(
     train_set = TensorDataset(train_images, train_target)
     test_set = TensorDataset(test_images, test_target)
     return train_set, test_set
+
 
 class CorruptMNISTDataModule(pl.LightningDataModule):
     def __init__(self, data_dir="data/processed", batch_size=64):
@@ -76,6 +78,6 @@ class CorruptMNISTDataModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
 
+
 if __name__ == "__main__":
     typer.run(preprocess_data)
-

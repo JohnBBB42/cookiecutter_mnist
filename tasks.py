@@ -75,21 +75,24 @@ def serve_docs(ctx: Context) -> None:
     """Serve documentation."""
     ctx.run("mkdocs serve --config-file docs/mkdocs.yaml", echo=True, pty=not WINDOWS)
 
+
 # Assignment commands
 @task
 def python(ctx: Context) -> None:
     """Check where the Python is located."""
     ctx.run("which python" if os.name != "nt" else "where python")
 
+
 @task
 def git(ctx: Context, message: str) -> None:
     """Git Add, Push and Commit"""
-    ctx.run(f"git add .")
+    ctx.run("git add .")
     ctx.run(f"git commit -m '{message}'")
-    ctx.run(f"git push")
+    ctx.run("git push")
+
 
 @task
 def conda(ctx: Context, name: str = "dtu_mlops") -> None:
     ctx.run(f"conda create --name {name} --file environment.yaml", echo=True)
     ctx.run(f"conda activate {name}", echo=True)
-    ctx.run(f"pip install -e .", echo=True)
+    ctx.run("pip install -e .", echo=True)

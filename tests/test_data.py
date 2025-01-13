@@ -1,11 +1,13 @@
-from mnist_project.data import corrupt_mnist, normalize, preprocess_data, CorruptMNISTDataModule
-import torch
 import os.path
+
 import pytest
-from pathlib import Path
+import torch
+
+from mnist_project.data import CorruptMNISTDataModule, corrupt_mnist, normalize, preprocess_data
 
 # Check for existence of the data directory rather than a specific file
 data_dir = os.path.join("data", "processed")
+
 
 @pytest.mark.skipif(not os.path.exists(data_dir), reason="Processed data directory not found")
 def test_data():
@@ -17,19 +19,21 @@ def test_data():
             assert x.shape == (1, 28, 28)
             assert y in range(10)
     train_targets = torch.unique(train.tensors[1])
-    assert (train_targets == torch.arange(0,10)).all(), "Train targets did not have the correct number of samples"
+    assert (train_targets == torch.arange(0, 10)).all(), "Train targets did not have the correct number of samples"
     test_targets = torch.unique(test.tensors[1])
-    assert (test_targets == torch.arange(0,10)).all(), "Test targets did not have the correct number of samples"
+    assert (test_targets == torch.arange(0, 10)).all(), "Test targets did not have the correct number of samples"
+
 
 def test_datamodule_fit_stage(tmp_path):
     dm = CorruptMNISTDataModule(data_dir="data/processed", batch_size=32)
-    dm.setup(stage="fit")    # This covers the "fit" branch
+    dm.setup(stage="fit")  # This covers the "fit" branch
     assert dm.train_dataset is not None, "train_dataset not created in fit stage"
     assert dm.test_dataset is not None, "test_dataset not created in fit stage"
 
+
 def test_datamodule_test_stage(tmp_path):
     dm = CorruptMNISTDataModule(data_dir="data/processed", batch_size=32)
-    dm.setup(stage="test")   # This covers the "test" branch
+    dm.setup(stage="test")  # This covers the "test" branch
     assert dm.test_dataset is not None, "test_dataset not created in test stage"
 
 
@@ -68,6 +72,7 @@ def test_preprocess_data(tmp_path, n_files):
     assert train_images.shape[1] == 1, "Expected images to be unsqueezed (channels=1)."
     assert train_images.dtype == torch.float32, "Expected images to be float after conversion."
     assert train_targets.dtype == torch.long, "Targets should be long."
+
 
 def test_normalize():
     images = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
