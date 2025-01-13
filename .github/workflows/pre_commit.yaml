@@ -27,8 +27,8 @@ jobs:
           cache-dependency-path: setup.py
 
       - name: Install pre-commit
-      uses: pre-commit/action@v3.0.1
-      continue-on-error: true
+        uses: pre-commit/action@v3.0.1
+        continue-on-error: true
 
       - name: List modified files
         run: |
@@ -39,3 +39,4 @@ jobs:
         with:
           commit_message: Pre-commit fixes
           commit_options: '--no-verify'
+
