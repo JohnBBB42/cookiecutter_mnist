@@ -2,28 +2,10 @@ import os
 import time
 import torch
 import wandb
-import pytorch_lightning as pl
 
 # Example import of your model
 from mnist_project.lightning import MyAwesomeModel  # or your actual model location
 
-def load_checkpoint_safely(checkpoint_path: str):
-    """
-    Load a checkpoint and add a 'pytorch-lightning_version' key if it's missing.
-    This way, we don't hardcode an older Lightning version; we use the current one.
-    """
-    checkpoint = torch.load(checkpoint_path, map_location="cpu")
-
-    # If the key is missing, automatically set it to the current installed PyTorch Lightning version
-    if "pytorch-lightning_version" not in checkpoint:
-        current_pl_version = pl.__version__
-        checkpoint["pytorch-lightning_version"] = current_pl_version
-
-        # (Optional) Save the patched checkpoint if you want a permanent fix
-        torch.save(checkpoint, checkpoint_path)
-
-    # Now safely load the model
-    return MyAwesomeModel.load_from_checkpoint(checkpoint_path)
 
 def load_model(artifact_name: str):
     """
@@ -49,8 +31,8 @@ def load_model(artifact_name: str):
     file_name = artifact.files()[0].name
     checkpoint_path = os.path.join(artifact_dir, file_name)
 
-    # Use our safe loading function
-    model = load_checkpoint_safely(checkpoint_path)
+    # Load the model checkpoint
+    model = MyAwesomeModel.load_from_checkpoint(checkpoint_path)
     return model
 
 def test_model_speed():
