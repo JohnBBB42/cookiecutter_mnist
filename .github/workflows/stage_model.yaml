@@ -45,6 +45,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
+          pip install -e .
 
       - name: Test model
         run: |
@@ -80,7 +81,7 @@ jobs:
 
       - name: Add production alias
         run: |
-          python link_model.py $MODEL_NAME -a production
+          python scripts/link_model.py $MODEL_NAME -a production
 
 
 

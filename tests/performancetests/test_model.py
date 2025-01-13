@@ -6,6 +6,7 @@ import wandb
 # Example import of your model
 from mnist_project.lightning import MyAwesomeModel  # or your actual model location
 
+
 def load_model(artifact_name: str):
     """
     Load a model from a wandb artifact given the artifact name.
