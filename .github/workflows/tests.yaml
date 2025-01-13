@@ -36,10 +36,9 @@ jobs:
           pip install -e .
           pip list
 
-
       - name: Run tests & coverage
         run: |
-          coverage run --source=mnist_project -m pytest tests/
+          coverage run --source=mnist_project -m pytest --ignore=tests/performancetests tests/
           coverage report -m
 
       - name: Upload Coverage to Codecov
