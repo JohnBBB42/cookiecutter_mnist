@@ -7,23 +7,51 @@ import pytorch_lightning as pl
 # Example import of your model
 from mnist_project.lightning import MyAwesomeModel  # or your actual model location
 
+
 def load_checkpoint_safely(checkpoint_path: str):
     """
-    Load a checkpoint and add a 'pytorch-lightning_version' key if it's missing.
-    This way, we don't hardcode an older Lightning version; we use the current one.
+    Load a checkpoint file from disk and ensure it has a proper Lightning format:
+      - if 'state_dict' is missing, nest raw weights under 'state_dict'
+      - if 'pytorch-lightning_version' is missing, set it to the installed PL version
+      - if 'hyper_parameters' is missing, set it to {}
+    
+    Returns a path to a (temporarily) fixed checkpoint, so Lightning can load it.
     """
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
 
-    # If the key is missing, automatically set it to the current installed PyTorch Lightning version
+    # Step 1: If 'state_dict' is missing, assume we're dealing with raw weights
+    if "state_dict" not in checkpoint:
+        new_checkpoint = {
+            # Provide an empty dict if hyperparameters are missing
+            "hyper_parameters": checkpoint.get("hyper_parameters", {}),
+            # If there's no PL version, add the current installed version
+            "pytorch-lightning_version": checkpoint.get(
+                "pytorch-lightning_version", pl.__version__
+            ),
+            "state_dict": {}
+        }
+
+        # Move model weights into "state_dict"
+        for key, value in checkpoint.items():
+            if key not in ("hyper_parameters", "pytorch-lightning_version"):
+                new_checkpoint["state_dict"][key] = value
+
+        checkpoint = new_checkpoint
+
+    # Step 2: If 'pytorch-lightning_version' still missing, set it
     if "pytorch-lightning_version" not in checkpoint:
-        current_pl_version = pl.__version__
-        checkpoint["pytorch-lightning_version"] = current_pl_version
+        checkpoint["pytorch-lightning_version"] = pl.__version__
 
-        # (Optional) Save the patched checkpoint if you want a permanent fix
-        torch.save(checkpoint, checkpoint_path)
+    # Step 3: If 'hyper_parameters' missing, set it
+    if "hyper_parameters" not in checkpoint:
+        checkpoint["hyper_parameters"] = {}
 
-    # Now safely load the model
-    return MyAwesomeModel.load_from_checkpoint(checkpoint_path)
+    # (Optional) Re-save to a new path for ease
+    fixed_checkpoint_path = checkpoint_path + ".temp.ckpt"
+    torch.save(checkpoint, fixed_checkpoint_path)
+
+    return fixed_checkpoint_path
+
 
 def load_model(artifact_name: str):
     """
@@ -49,9 +77,13 @@ def load_model(artifact_name: str):
     file_name = artifact.files()[0].name
     checkpoint_path = os.path.join(artifact_dir, file_name)
 
-    # Use our safe loading function
-    model = load_checkpoint_safely(checkpoint_path)
+    # Patch the checkpoint if needed and get a "fixed" path
+    fixed_path = load_checkpoint_safely(checkpoint_path)
+
+    # Now safely load the model
+    model = MyAwesomeModel.load_from_checkpoint(fixed_path)
     return model
+
 
 def test_model_speed():
     """
