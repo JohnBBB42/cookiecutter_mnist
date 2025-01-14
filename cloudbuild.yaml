@@ -7,7 +7,7 @@ steps:
     '-t',
     'europe-west1-docker.pkg.dev/united-concord-447713-c7/my-container-registry/image_test',
     '-f',
-    './dockerfiles/Dockerfile'
+    './dockerfiles/train.dockerfile'
   ]
 - name: 'gcr.io/cloud-builders/docker'
   id: 'Push container image'
