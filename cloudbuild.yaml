@@ -15,3 +15,6 @@ steps:
     'push',
     'europe-west1-docker.pkg.dev/united-concord-447713-c7/my-container-registry/image_test'
   ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
